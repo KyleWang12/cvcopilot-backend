@@ -21,11 +21,11 @@ public class UserProfile {
     private List<Education> educations;
 
     public UserProfile() {
-        this.links = new ArrayList<>();
-        this.skills = new ArrayList<>();
-        this.projects = new ArrayList<>();
-        this.workExperiences = new ArrayList<>();
-        this.educations = new ArrayList<>();
+//        this.links = new ArrayList<>();
+//        this.skills = new ArrayList<>();
+//        this.projects = new ArrayList<>();
+//        this.workExperiences = new ArrayList<>();
+//        this.educations = new ArrayList<>();
     }
 
     public UserProfile(Long id, String firstname, String lastname, String phone, String address, List<Link> links, List<Skill> skills, List<Project> projects, List<WorkExperience> workExperiences, List<Education> educations) {
@@ -248,57 +248,63 @@ class Skill {
 }
 
 class WorkExperience {
-    private String company;
     private String title;
-    private String start;
-    private String end;
+    private String company;
+    private String type;
+    private String startDate;
+    private String endDate;
     private String description;
 
     public WorkExperience() {
     }
 
-    public WorkExperience(String company, String title, String start, String end, String description) {
-        this.company = company;
+    public WorkExperience(String title, String company,String type, String start, String end, String description) {
         this.title = title;
-        this.start = start;
-        this.end = end;
+        this.company = company;
+        this.type = type;
+        this.startDate = start;
+        this.endDate = end;
         this.description = description;
-    }
-
-    public String getCompany() {
-        return company;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public String getStart() {
-        return start;
+    public String getCompany() {
+        return company;
     }
 
-    public String getEnd() {
-        return end;
+    public String getType() { return type; }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setStart(String start) {
-        this.start = start;
+    public void setCompany(String company) {
+        this.company = company;
     }
 
-    public void setEnd(String end) {
-        this.end = end;
+    public void setType(String type) { this.type = type; }
+
+    public void setStartDate(String start) {
+        this.startDate = start;
+    }
+
+    public void setEndDate(String end) {
+        this.endDate = end;
     }
 
     public void setDescription(String description) {
