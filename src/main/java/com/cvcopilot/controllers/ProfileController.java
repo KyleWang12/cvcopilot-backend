@@ -1,10 +1,14 @@
 package com.cvcopilot.controllers;
 
 import com.cvcopilot.models.userProfile.UserProfile;
+import com.cvcopilot.security.services.UserDetailsImpl;
 import com.cvcopilot.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -19,9 +23,15 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
+    private Long getIDFromJwt(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return userDetails.getId();
+    }
+
     @GetMapping("/")
-    public ResponseEntity<?> getUserProfile(@PathVariable Long id){
-        UserProfile userProfile = profileService.findByID(id);
+    public ResponseEntity<?> getUserProfile(){
+        UserProfile userProfile = profileService.findByID(getIDFromJwt());
         if (userProfile == null) {
             return new ResponseEntity<>("UserProfile not found", HttpStatus.NOT_FOUND);
         }
@@ -35,7 +45,8 @@ public class ProfileController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<?> updateUserProfile(@PathVariable Long id, @RequestBody UserProfile userProfile){
+    public ResponseEntity<?> updateUserProfile(@RequestBody UserProfile userProfile){
+        Long id = getIDFromJwt();
         UserProfile existingUserProfile = profileService.findByID(id);
         if(existingUserProfile == null){
             return new ResponseEntity<>("UserProfile not found", HttpStatus.NOT_FOUND);
@@ -45,7 +56,8 @@ public class ProfileController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<?> deleteUserProfile(@PathVariable Long id){
+    public ResponseEntity<?> deleteUserProfile(){
+        Long id = getIDFromJwt();
         UserProfile userProfile = profileService.findByID(id);
         if(userProfile == null){
             return new ResponseEntity<>("UserProfile not found", HttpStatus.NOT_FOUND);
@@ -55,7 +67,8 @@ public class ProfileController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<?> modifyUserProfile(@PathVariable Long id, @RequestBody UserProfile userProfile){
+    public ResponseEntity<?> modifyUserProfile(@RequestBody UserProfile userProfile){
+        Long id = getIDFromJwt();
         UserProfile existingUserProfile = profileService.findByID(id);
         if(existingUserProfile == null){
             return new ResponseEntity<>("UserProfile not found", HttpStatus.NOT_FOUND);

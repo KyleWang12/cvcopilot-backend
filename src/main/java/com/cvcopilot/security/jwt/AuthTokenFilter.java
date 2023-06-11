@@ -1,5 +1,6 @@
 package com.cvcopilot.security.jwt;
 
+import com.cvcopilot.security.services.UserDetailsImpl;
 import com.cvcopilot.security.services.UserDetailsServiceImpl;
 import java.io.IOException;
 
@@ -35,7 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
       if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
