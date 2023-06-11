@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping("/api/profiles/me")
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -19,7 +19,7 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/")
     public ResponseEntity<?> getUserProfile(@PathVariable Long id){
         UserProfile userProfile = profileService.findByID(id);
         if (userProfile == null) {
@@ -34,7 +34,7 @@ public class ProfileController {
         return new ResponseEntity<>(createdUserProfile, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/")
     public ResponseEntity<?> updateUserProfile(@PathVariable Long id, @RequestBody UserProfile userProfile){
         UserProfile existingUserProfile = profileService.findByID(id);
         if(existingUserProfile == null){
@@ -44,7 +44,7 @@ public class ProfileController {
         return new ResponseEntity<>(updatedUserProfile, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/")
     public ResponseEntity<?> deleteUserProfile(@PathVariable Long id){
         UserProfile userProfile = profileService.findByID(id);
         if(userProfile == null){
@@ -54,7 +54,7 @@ public class ProfileController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/")
     public ResponseEntity<?> modifyUserProfile(@PathVariable Long id, @RequestBody UserProfile userProfile){
         UserProfile existingUserProfile = profileService.findByID(id);
         if(existingUserProfile == null){
