@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +24,9 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
-    private Long getIDFromJwt(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        return userDetails.getId();
-    }
-
     @GetMapping("/")
-    public ResponseEntity<?> getUserProfile(){
-        UserProfile userProfile = profileService.findByID(getIDFromJwt());
+    public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        UserProfile userProfile = profileService.findByID(userDetails.getId());
         if (userProfile == null) {
             return new ResponseEntity<>("UserProfile not found", HttpStatus.NOT_FOUND);
         }
@@ -39,41 +34,43 @@ public class ProfileController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createUserProfile(@RequestBody UserProfile userProfile){
+    public ResponseEntity<?> createUserProfile(@RequestBody UserProfile userProfile, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        UserProfile existUserProfile = profileService.findByID(userDetails.getId());
+        if (existUserProfile != null) {
+            return new ResponseEntity<>("UserProfile already exists", HttpStatus.CONFLICT);
+        }
+        userProfile.setId(userDetails.getId());
         UserProfile createdUserProfile = profileService.create(userProfile);
         return new ResponseEntity<>(createdUserProfile, HttpStatus.CREATED);
     }
 
     @PutMapping("/")
-    public ResponseEntity<?> updateUserProfile(@RequestBody UserProfile userProfile){
-        Long id = getIDFromJwt();
-        UserProfile existingUserProfile = profileService.findByID(id);
+    public ResponseEntity<?> updateUserProfile(@RequestBody UserProfile userProfile, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        UserProfile existingUserProfile = profileService.findByID(userDetails.getId());
         if(existingUserProfile == null){
             return new ResponseEntity<>("UserProfile not found", HttpStatus.NOT_FOUND);
         }
-        UserProfile updatedUserProfile = profileService.update(id, userProfile);
+        UserProfile updatedUserProfile = profileService.update(userDetails.getId(), userProfile);
         return new ResponseEntity<>(updatedUserProfile, HttpStatus.OK);
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<?> deleteUserProfile(){
-        Long id = getIDFromJwt();
-        UserProfile userProfile = profileService.findByID(id);
+    public ResponseEntity<?> deleteUserProfile(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        UserProfile userProfile = profileService.findByID(userDetails.getId());
         if(userProfile == null){
             return new ResponseEntity<>("UserProfile not found", HttpStatus.NOT_FOUND);
         }
-        profileService.delete(id);
+        profileService.delete(userDetails.getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/")
-    public ResponseEntity<?> modifyUserProfile(@RequestBody UserProfile userProfile){
-        Long id = getIDFromJwt();
-        UserProfile existingUserProfile = profileService.findByID(id);
+    public ResponseEntity<?> modifyUserProfile(@RequestBody UserProfile userProfile, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        UserProfile existingUserProfile = profileService.findByID(userDetails.getId());
         if(existingUserProfile == null){
             return new ResponseEntity<>("UserProfile not found", HttpStatus.NOT_FOUND);
         }
-        UserProfile updatedUserProfile = profileService.update(id, userProfile);
+        UserProfile updatedUserProfile = profileService.update(userDetails.getId(), userProfile);
         return new ResponseEntity<>(updatedUserProfile, HttpStatus.OK);
     }
 }
