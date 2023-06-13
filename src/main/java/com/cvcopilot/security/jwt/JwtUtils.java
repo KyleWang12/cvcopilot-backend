@@ -23,16 +23,19 @@ public class JwtUtils {
   private String jwtSecret;
 
   @Value("${app.jwtExpirationMs}")
-  private int jwtExpirationMs;
+  private long jwtExpirationMs;
 
-  public String generateJwtToken(Authentication authentication) {
+  @Value("${app.jwtExpirationMsRememberMe}")
+  private long jwtExpirationMsRememberMe;
+
+  public String generateJwtToken(Authentication authentication, boolean rememberMe) {
 
     UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
     return Jwts.builder()
         .setSubject((userPrincipal.getUsername()))
         .setIssuedAt(new Date())
-        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+        .setExpiration(new Date((new Date()).getTime() + (rememberMe ? jwtExpirationMsRememberMe : jwtExpirationMs)))
         .signWith(key(), SignatureAlgorithm.HS256)
         .compact();
   }
