@@ -68,3 +68,27 @@ jobs:
         with:
           name: cv-copilot
           path: /home/runner/work/cvcopilot-backend/cvcopilot-backend/target/cv-copilot.jar
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: cv-copilot
+          path: /home/ubuntu/actions-runner/_work/cvcopilot-backend
+
+      - name: Execute jar
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USER: ${{ secrets.DB_USER }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        run: |
+          if [ "$(sudo lsof -t -i:8080)" ]; then
+            sudo kill -9 $(sudo lsof -t -i:8080)
+          fi
+          
+          sudo -E java -jar /home/ubuntu/actions-runner/_work/cvcopilot-backend/cv-copilot.jar > /home/ubuntu/logs.log 2>&1 &
