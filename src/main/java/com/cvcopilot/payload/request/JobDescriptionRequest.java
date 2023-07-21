@@ -1,4 +1,4 @@
-package com.cvcopilot.resume.payload;
+package com.cvcopilot.payload.request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,5 +6,5 @@ import lombok.Setter;
 @Setter
 @Getter
 public class JobDescriptionRequest {
-    private String jobDescriptionRequest;
+    private String jobDescription;
 }
