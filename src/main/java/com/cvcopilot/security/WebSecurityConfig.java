@@ -60,19 +60,12 @@ public class WebSecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-//  @Bean
-//  public StrictHttpFirewall httpFirewall() {
-//    StrictHttpFirewall firewall = new StrictHttpFirewall();
-//    firewall.setAllowedHttpMethods(Arrays.asList("HEAD", "DELETE", "POST", "GET", "OPTIONS", "PATCH", "PUT", "PROPFIND"));
-//    return firewall;
-//  }
-
   @Bean
   public CorsFilter corsFilter() {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
-    // TODO: Set allowed origins to specific domains in production!
+
     config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://cvcopilot.postman.co"));
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");
